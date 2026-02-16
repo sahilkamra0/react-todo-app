@@ -2,43 +2,61 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [task, setTask] = useState("");
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([]); // must be an array
 
+  // Load from localStorage safely
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("todos"));
-    if (saved) setTodos(saved);
+    try {
+      const saved = JSON.parse(localStorage.getItem("todos"));
+      if (Array.isArray(saved)) {
+        setTodos(saved);
+      } else {
+        setTodos([]);
+      }
+    } catch (err) {
+      setTodos([]);
+    }
   }, []);
 
+  // Save to localStorage whenever todos change
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  function addTodo() {
+  const addTodo = () => {
     if (!task.trim()) return;
-    setTodos([...todos, { id: Date.now(), text: task }]);
-    setTask("");
-  }
 
-  function deleteTodo(id) {
+    const newTodo = {
+      id: Date.now(),
+      text: task,
+    };
+
+    setTodos([...todos, newTodo]);
+    setTask("");
+  };
+
+  const deleteTodo = (id) => {
     setTodos(todos.filter((t) => t.id !== id));
-  }
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Todo Pro</h1>
+    <div style={{ maxWidth: "400px", margin: "40px auto", fontFamily: "Arial" }}>
+      <h2>📝 Todo Pro</h2>
 
       <input
+        type="text"
+        placeholder="Add task"
         value={task}
         onChange={(e) => setTask(e.target.value)}
-        placeholder="Add task"
       />
+
       <button onClick={addTodo}>Add</button>
 
       <ul>
         {todos.map((t) => (
           <li key={t.id}>
             {t.text}
-            <button onClick={() => deleteTodo(t.id)}> ❌ </button>
+            <button onClick={() => deleteTodo(t.id)}>❌</button>
           </li>
         ))}
       </ul>
