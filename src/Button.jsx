@@ -3,10 +3,13 @@ function Button({ text, onClick }) {
     <button
       onClick={onClick}
       style={{ padding: "8px 12px", background: "blue", color: "white" }}
-    >. Hello button
+    >. Hello 
       {text}
     </button>
   );
 }
 
 export default Button;
+
+
+
